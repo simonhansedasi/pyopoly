@@ -15,15 +15,15 @@ def roll_dice():
         
         
 class Property:
-    def __init__(self, name, price, rent, color, is_go=False, is_community_chest=False, is_chance=False, is_tax=False, is_jail=False, is_ec=False, is_fp=False, is_ww=False, is_gtj=False):
+    def __init__(self, name, price, rent, color, is_go=False, is_l_f_l=False, is_luck=False, is_tax=False, is_jail=False, is_ec=False, is_fp=False, is_ww=False, is_gtj=False):
         self.name = name
         self.price = price
         self.rent = rent
         self.color = color
         self.owner = None
         self.is_go = is_go
-        self.is_community_chest = is_community_chest
-        self.is_chance = is_chance
+        self.is_l_f_l = is_l_f_l
+        self.is_luck = is_luck
         self.is_tax = is_tax
         self.is_jail = is_jail
         self.is_ec = is_ec
@@ -35,45 +35,45 @@ class Board:
     def __init__(self):
         self.properties = [
             Property('Go', None, None, 'white', is_go=True),
-            Property('Mediterranean Ave', 60, 2, 'brown'),
-            Property('Community Chest', None, None, 'white', is_community_chest=True),
-            Property('Baltic Ave', 60, 4, 'brown'),
+            Property('Feta St', 60, 2, 'brown'),
+            Property('Little Free Library', None, None, 'white', is_l_f_l=True),
+            Property('Tallinn St', 60, 4, 'brown'),
             Property('Income Tax',None, 200, 'white', is_tax=True),
-            Property('Reading Railroad', 200, 25, 'white'),
-            Property('Oriental Ave', 100, 6, 'lblue'),
-            Property('Chance', None, None, 'white', is_chance=True),
-            Property('Vermont Ave', 100, 6, 'lblue'),
-            Property('Connecticut Ave', 120, 8, 'lblue'),
-            Property('Jail', None,None, 'white',is_jail=True),
-            Property('St Charles Pl', 140, 10, 'purple'),
-            Property('Electric Company', 130, 10, 'white',is_ec=True),
-            Property('States Ave', 140, 10, 'purple'),
-            Property('Virginia Ave', 160, 12, 'purple'),
-            Property('Pennsylvania Railroad', 200, 25, 'white'),           
-            Property('St James Pl', 180, 14, 'orange'),
-            Property('Community Chest', None, None, 'white', is_community_chest=True),
-            Property('Tennessee Ave', 180, 14, 'orange'),
-            Property('New York Ave', 200, 16, 'orange'),
+            Property('Reading Rainbow', 200, 25, 'white'),
+            Property('Old Racist Ave', 100, 6, 'lblue'),
+            Property('Luck', None, None, 'white', is_luck=True),
+            Property('Ben & Jerrys Ave', 100, 6, 'lblue'),
+            Property('Fancy White People Ave', 120, 8, 'lblue'),
+            Property('Minimum Security Resort', None,None, 'white',is_jail=True),
+            Property('Charlies Pl', 140, 10, 'purple'),
+            Property('Power Grid', 130, 10, 'white',is_ec=True),
+            Property('States Rights Ave', 140, 10, 'purple'),
+            Property('Tobacco Ln', 160, 12, 'purple'),
+            Property('Cheeststeak Railroad', 200, 25, 'white'),           
+            Property('Pocahontas Wy', 180, 14, 'orange'),
+            Property('Little Free Library', None, None, 'white', is_l_f_l=True),
+            Property('Nashville Ave', 180, 14, 'orange'),
+            Property('Haarlem', 200, 16, 'orange'),
             Property('Free Parking', None, None, 'white', is_fp=True),
-            Property('Kentucky Ave', 220, 18, 'red'),
-            Property('Chance', None, None, 'white', is_chance=True),
-            Property('Indiana Ave', 220, 18, 'red'),
-            Property('Illinois Ave', 240, 20, 'red'),
-            Property('B & O Railroad', 200, 25, 'white'),           
-            Property('Atlantic Ave', 260, 22, 'yellow'),
-            Property('Ventnor Ave', 260, 22, 'yellow'),
-            Property('Water Works', 150, 10, 'white',is_ww=True),
-            Property('Marvin Gardens', 280, 24, 'yellow'),
-            Property('Go To Jail', None, None, 'white',is_gtj=True),
-            Property('Pacific Ave', 300, 26, 'green'),
-            Property('North Carolina Ave', 300, 26, 'green'),
-            Property('Community Chest', None, None, 'white', is_community_chest=True),
-            Property('Pennsylvania Ave', 320, 28, 'green'),
-            Property('Short Line Railroad', 200, 25, 'white'),           
-            Property('Chance', None, None, 'white', is_chance=True),
-            Property('Park Pl', 350, 35, 'dblue'),
+            Property('Kentucky Fried Chicken', 220, 18, 'red'),
+            Property('Luck', None, None, 'white', is_luck=True),
+            Property('Sasparilla Mkt', 220, 18, 'red'),
+            Property('Land O Lincoln', 240, 20, 'red'),
+            Property('Stinky Railroad', 200, 25, 'white'),           
+            Property('Atlantic City', 260, 22, 'yellow'),
+            Property('Darth Vader', 260, 22, 'yellow'),
+            Property('Pumphouse', 150, 10, 'white',is_ww=True),
+            Property('Martins Fartens', 280, 24, 'yellow'),
+            Property('SEC Investigation', None, None, 'white',is_gtj=True),
+            Property('Birken-no-socks St', 300, 26, 'green'),
+            Property('Beach Ave', 300, 26, 'green'),
+            Property('Little Free Library', None, None, 'white', is_l_f_l=True),
+            Property('The White House', 320, 28, 'green'),
+            Property('Shawty Railroad', 200, 25, 'white'),           
+            Property('Luck', None, None, 'white', is_luck=True),
+            Property('Queen Anne', 350, 35, 'dblue'),
             Property('Luxury Tax',None, 75, 'white', is_tax=True),
-            Property('Boardwalk', 400, 50, 'dblue'),
+            Property('Empire St Bldg', 400, 50, 'dblue'),
 
         ]
         self.num_tiles = len(self.properties)
@@ -154,12 +154,12 @@ def main():
         if current_property.is_go or players[current_player].position < previous_position:
             players[current_player].money += 200
             print(f'{players[current_player].name} passed Go and received $200.')
-        if current_property.is_community_chest:
-            print(f'{players[current_player].name} drew a Community Chest card.')
-            # Implement Community Chest logic here
-        if current_property.is_chance:
-            print(f'{players[current_player].name} drew a Chance card.')
-            # Implement Chance logic here
+        if current_property.is_l_f_l:
+            print(f'{players[current_player].name} drew a Little Free Library card.')
+            # Implement Little Free Library logic here
+        if current_property.is_luck:
+            print(f'{players[current_player].name} drew a Luck card.')
+            # Implement luck logic here
         else:
             # Handle actions based on the tile landed on
             if current_property.owner is None and current_property.price is not None:
