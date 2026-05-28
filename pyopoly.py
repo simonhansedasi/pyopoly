@@ -736,6 +736,79 @@ def _cpu_evaluate_trade(cpu, board, offer_props, offer_cash, want_props, want_ca
     return net >= -threshold
 
 
+def cpu_initiate_trade(player, players, board):
+    """CPU proactively proposes a trade to complete or advance a color monopoly."""
+    if random.random() > 0.4:
+        return  # only attempt 40% of turns to avoid spam
+
+    for color, group in board.color_groups.items():
+        cpu_owns = [p for p in group if p.owner == player]
+        if not cpu_owns or len(cpu_owns) == len(group):
+            continue  # skip: owns none, or already has monopoly
+
+        missing = [
+            p for p in group
+            if p.owner not in (None, player) and not p.owner.bankrupt and p.houses == 0
+        ]
+        if not missing:
+            continue
+
+        for want_prop in missing:
+            target = want_prop.owner
+
+            # Build offer: try cash first (25% premium over list price)
+            give_props = []
+            give_cash = int(want_prop.price * 1.25)
+
+            if player.money - give_cash < 200:
+                # Can't afford pure cash — offer a property instead
+                candidates = sorted(
+                    [p for p in board.properties
+                     if p.owner == player and p.price and p.houses == 0
+                     and p.color != color
+                     and not board.has_monopoly(player, p.color)],
+                    key=lambda p: abs(p.price - want_prop.price)
+                )
+                if not candidates:
+                    continue
+                give_prop = candidates[0]
+                give_props = [give_prop]
+                give_cash = max(0, want_prop.price - give_prop.price)
+                if player.money - give_cash < 100:
+                    continue
+
+            offer_str = ', '.join(clr(p.name, p.color) for p in give_props)
+            if give_cash:
+                offer_str = (offer_str + ' + ' if offer_str else '') + f'${give_cash}'
+            if not offer_str:
+                offer_str = 'nothing'
+
+            print(f'\n  {bold(player.name)} proposes a trade to {bold(target.name)}:')
+            print(f'  Offers : {offer_str}')
+            print(f'  Wants  : {clr(want_prop.name, want_prop.color)}')
+
+            if target.is_cpu:
+                accepted = _cpu_evaluate_trade(target, board, give_props, give_cash, [want_prop], 0)
+                if accepted:
+                    print(f'  {bold(target.name)} accepts!')
+                else:
+                    print(f'  {bold(target.name)} declines.')
+                    continue
+            else:
+                ch = input('  Accept? (y/n): ').strip().lower()
+                if ch != 'y':
+                    print('  Trade declined.')
+                    continue
+
+            for p in give_props:
+                p.owner = target
+            want_prop.owner = player
+            player.money -= give_cash
+            target.money += give_cash
+            print(f'  {clr("Trade complete!", "green")}')
+            return  # one trade per turn
+
+
 def human_mortgage_menu(player, board):
     while True:
         owned = [p for p in board.properties if p.owner == player and p.price]
@@ -929,6 +1002,7 @@ def human_turn(player, players, board, luck_deck, lfl_deck):
 def cpu_turn(player, players, board, luck_deck, lfl_deck):
     header(f'{player.name}\'s TURN  (CPU)  —  Cash: ${player.money}')
     time.sleep(0.4)
+    cpu_initiate_trade(player, players, board)
     cpu_build(player, board)
 
     if player.in_jail:
@@ -977,9 +1051,9 @@ def main():
 
     players = [
         Player(name,                  is_cpu=False),
-        Player('CPU - Chomper',       is_cpu=True),
-        Player('CPU - Banksy',        is_cpu=True),
-        Player('CPU - Foreclosure Phil', is_cpu=True),
+        Player('Chomper',       is_cpu=True),
+        Player('Banksy',        is_cpu=True),
+        Player('Foreclosure Phil', is_cpu=True),
     ]
 
     print(f'\n  Players: {", ".join(bold(p.name) for p in players)}')
